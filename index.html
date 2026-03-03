@@ -1,26 +1,62 @@
-<!doctype html>
-<html lang="ar">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title></title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>دريفت السيارة - B3R9Y Games</title>
   <style>
-    html,body { height:100%; margin:0; }
-    body {
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:#000;
-    }
-    img {
-      max-width:100%;
-      max-height:100%;
-      object-fit:contain;
-      display:block;
-    }
+    body { margin:0; height:100vh; background:#000; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#0ff; font-family:Arial; }
+    canvas { background:#111; border:4px solid #0ff; box-shadow:0 0 30px #0ff; border-radius:10px; }
+    h1 { margin:10px; }
+    #info { font-size:18px; margin:5px; text-align:center; }
   </style>
 </head>
 <body>
-  <img src="B3r9Y.png" alt="">
+  <h1>🛞 دريفت السيارة من الأعلى! 🛞</h1>
+  <div id="info">W: تقديم | S: فرامل | A/D: دوران | حاول تبقى في الطريق وتدريفت!</div>
+  <canvas id="canvas" width="600" height="600"></canvas>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    let car = { x:300, y:300, width:30, height:60, angle:0, speed:0, vx:0, vy:0, acc:0.2, fric:0.05, turn:0.04, max:5, drift:0.92 };
+    let keys = {};
+
+    window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
+    window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+    function update() {
+      if (keys['w']) car.speed = Math.min(car.speed + car.acc, car.max);
+      if (keys['s']) car.speed = Math.max(car.speed - car.acc * 1.5, -car.max/2);
+      if (keys['a']) car.angle -= car.turn * (car.speed ? 1 : 0.5);
+      if (keys['d']) car.angle += car.turn * (car.speed ? 1 : 0.5);
+
+      const fx = Math.cos(car.angle), fy = Math.sin(car.angle);
+      car.vx += fx * car.speed * 0.1;
+      car.vy += fy * car.speed * 0.1;
+      car.vx *= car.fric * car.drift;
+      car.vy *= car.fric * car.drift;
+      car.x += car.vx;
+      car.y += car.vy;
+
+      if (car.x > 600) car.x = 0; if (car.x < 0) car.x = 600;
+      if (car.y > 600) car.y = 0; if (car.y < 0) car.y = 600;
+    }
+
+    function draw() {
+      ctx.clearRect(0,0,600,600);
+      ctx.save();
+      ctx.translate(car.x, car.y);
+      ctx.rotate(car.angle);
+      ctx.fillStyle = '#00f';
+      ctx.shadowColor = '#0ff'; ctx.shadowBlur = 15;
+      ctx.fillRect(-15, -30, 30, 60);
+      ctx.restore();
+    }
+
+    function loop() { update(); draw(); requestAnimationFrame(loop); }
+    loop();
+  </script>
 </body>
 </html>
