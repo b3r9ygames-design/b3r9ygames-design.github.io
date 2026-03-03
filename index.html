@@ -23,21 +23,12 @@
       border: 4px solid #0ff;
       box-shadow: 0 0 40px #0ff;
       border-radius: 12px;
+      cursor: pointer;
     }
-    h1 {
-      margin: 10px 0 5px;
-      font-size: 32px;
-    }
-    #info {
-      font-size: 18px;
-      margin: 5px 0 10px;
-      text-align: center;
-      max-width: 600px;
-    }
-    #score {
-      font-size: 24px;
-      margin: 5px;
-    }
+    h1 { margin: 10px 0 5px; font-size: 32px; }
+    #info { font-size: 18px; margin: 5px 0 10px; text-align: center; max-width: 600px; }
+    #score { font-size: 24px; margin: 5px; }
+    #instructions { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,255,255,0.2); padding: 10px; border-radius: 10px; font-size: 16px; }
     #gameOver {
       position: absolute;
       top: 50%;
@@ -48,7 +39,7 @@
       border-radius: 15px;
       border: 3px solid #f00;
       color: #f00;
-      font-size: 40px;
+      font-size: 36px;
       text-align: center;
       text-shadow: 0 0 15px #f00;
       display: none;
@@ -58,9 +49,10 @@
 <body>
 
   <h1>🛞 دريفت السيارة من الأعلى! 🛞</h1>
-  <div id="info">W: تقديم | S: فرامل/تراجع | A/D: دوران<br>حاول تبقى في الطريق وتدريفت بقوة!</div>
+  <div id="info">اضغط على الكانفاس ثم استخدم W: تقديم | S: فرامل | A/D: دوران</div>
   <div id="score">النقاط: 0 | السرعة: 0 km/h</div>
-  <canvas id="canvas" width="600" height="700"></canvas>
+  <canvas id="canvas" width="600" height="700" tabindex="0"></canvas>
+  <div id="instructions">كليك هنا للعب! 👆</div>
   <div id="gameOver">
     انتهى الدريفت! 💥<br>
     <span id="finalScore">0</span> نقاط<br><br>
@@ -73,88 +65,82 @@
     const scoreEl = document.getElementById('score');
     const gameOverEl = document.getElementById('gameOver');
     const finalScoreEl = document.getElementById('finalScore');
+    const instructionsEl = document.getElementById('instructions');
 
     // السيارة
     let car = {
-      x: canvas.width / 2,
-      y: canvas.height / 2,
-      width: 30,
-      height: 60,
-      angle: 0,
-      speed: 0,
-      vx: 0,
-      vy: 0,
-      acceleration: 0.25,
-      friction: 0.96,
-      turnSpeed: 0.05,
-      maxSpeed: 6,
-      driftFactor: 0.89   // أقل = دريفت أقوى
+      x: 300, y: 350, width: 30, height: 60, angle: 0, speed: 0, vx: 0, vy: 0,
+      acceleration: 0.3, friction: 0.96, turnSpeed: 0.06, maxSpeed: 7, driftFactor: 0.88
     };
 
-    // الطريق المنحني
-    let roadOffset = 0;
-    const roadWidth = 220;
-
-    // حالة اللعبة
     let score = 0;
     let gameRunning = true;
     let keys = {};
 
-    window.addEventListener('keydown', e => {
-      keys[e.key.toLowerCase()] = true;
-      if (!gameRunning && e.key === ' ') resetGame();
+    // Event listeners على window + canvas (مضمون)
+    function addKeyListeners() {
+      const handleKeyDown = (e) => { keys[e.key.toLowerCase()] = true; };
+      const handleKeyUp = (e) => { keys[e.key.toLowerCase()] = false; };
+
+      window.addEventListener('keydown', handleKeyDown);
+      window.addEventListener('keyup', handleKeyUp);
+      canvas.addEventListener('keydown', handleKeyDown);
+      canvas.addEventListener('keyup', handleKeyUp);
+    }
+
+    // Focus تلقائي
+    canvas.addEventListener('click', () => {
+      canvas.focus();
+      instructionsEl.style.display = 'none';
     });
-    window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+    canvas.focus();
+    addKeyListeners();
+
+    window.addEventListener('keydown', (e) => {
+      if (!gameRunning && e.key === ' ') {
+        e.preventDefault();
+        resetGame();
+      }
+    });
 
     function resetGame() {
-      car.x = canvas.width / 2;
-      car.y = canvas.height / 2;
-      car.angle = 0;
-      car.speed = 0;
-      car.vx = 0;
-      car.vy = 0;
+      car = { x: 300, y: 350, width: 30, height: 60, angle: 0, speed: 0, vx: 0, vy: 0, acceleration: 0.3, friction: 0.96, turnSpeed: 0.06, maxSpeed: 7, driftFactor: 0.88 };
       score = 0;
-      roadOffset = 0;
       gameRunning = true;
       gameOverEl.style.display = 'none';
       scoreEl.textContent = 'النقاط: 0 | السرعة: 0 km/h';
-      loop();
     }
 
     function isOutOfRoad() {
-      const roadX = canvas.width / 2 + Math.sin(roadOffset * 0.008) * 90;
-      return Math.abs(car.x - roadX) > roadWidth / 2 + car.width / 2;
+      const curve = Math.sin(Date.now() * 0.001) * 100;
+      const roadCenter = 300 + curve;
+      return Math.abs(car.x - roadCenter) > 120;
     }
 
     function update() {
       if (!gameRunning) return;
 
-      // التحكم
+      // حركة
       if (keys['w']) car.speed = Math.min(car.speed + car.acceleration, car.maxSpeed);
-      if (keys['s']) car.speed = Math.max(car.speed - car.acceleration * 1.8, -car.maxSpeed / 2);
-      if (keys['a']) car.angle -= car.turnSpeed * (Math.abs(car.speed) / 2 + 0.5);
-      if (keys['d']) car.angle += car.turnSpeed * (Math.abs(car.speed) / 2 + 0.5);
+      if (keys['s']) car.speed = Math.max(car.speed - car.acceleration * 2, -car.maxSpeed / 2);
+      if (keys['a']) car.angle -= car.turnSpeed * (1 + Math.abs(car.speed) / 3);
+      if (keys['d']) car.angle += car.turnSpeed * (1 + Math.abs(car.speed) / 3);
 
-      // فيزياء
+      // فيزياء دريفت
       const fx = Math.cos(car.angle);
       const fy = Math.sin(car.angle);
-      car.vx += fx * car.speed * 0.12;
-      car.vy += fy * car.speed * 0.12;
+      car.vx += fx * car.speed * 0.15;
+      car.vy += fy * car.speed * 0.15;
       car.vx *= car.friction * car.driftFactor;
       car.vy *= car.friction * car.driftFactor;
       car.x += car.vx;
       car.y += car.vy;
 
-      // wrap around
-      if (car.x > canvas.width) car.x -= canvas.width;
-      if (car.x < 0) car.x += canvas.width;
-      if (car.y > canvas.height) car.y -= canvas.height;
-      if (car.y < 0) car.y += canvas.height;
+      // Wrap around
+      car.x = (car.x + 600) % 600;
+      car.y = (car.y + 700) % 700;
 
-      // تحريك الطريق
-      roadOffset += Math.abs(car.speed) * 1.8;
-
-      // خروج عن الطريق → game over
+      // Game over
       if (isOutOfRoad()) {
         gameRunning = false;
         finalScoreEl.textContent = score;
@@ -162,65 +148,61 @@
         return;
       }
 
-      // نقاط (سرعة + دريفت جانبي)
-      const driftBonus = Math.abs(car.vx - fx * car.speed) * 8;
-      score += Math.floor(Math.abs(car.speed) * 2 + driftBonus);
-      scoreEl.textContent = `النقاط: ${score} | السرعة: ${Math.floor(Math.abs(car.speed) * 25)} km/h`;
+      // نقاط
+      score += Math.floor(Math.abs(car.speed) * 3);
+      scoreEl.textContent = `النقاط: ${score} | السرعة: ${Math.floor(Math.abs(car.speed) * 30)} km/h`;
     }
 
     function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, 600, 700);
 
-      // رسم الطريق
-      ctx.strokeStyle = '#444';
-      ctx.lineWidth = roadWidth;
+      // طريق منحني
+      ctx.strokeStyle = '#555';
+      ctx.lineWidth = 240;
+      ctx.lineCap = 'round';
       ctx.beginPath();
-      for (let i = -100; i < canvas.height + 100; i += 10) {
-        const curve = Math.sin((roadOffset + i) * 0.008) * 90;
-        const x = canvas.width / 2 + curve;
-        const y = i;
-        if (i === -100) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      for (let i = 0; i < 800; i += 20) {
+        const curve = Math.sin((i * 0.01 + Date.now() * 0.0005)) * 100;
+        ctx.lineTo(300 + curve, i - 100);
       }
       ctx.stroke();
 
-      // خطوط بيضاء وسط الطريق
+      // خطوط وسط
       ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 6;
-      ctx.setLineDash([25, 25]);
+      ctx.lineWidth = 8;
+      ctx.setLineDash([30, 30]);
       ctx.beginPath();
-      for (let i = -100; i < canvas.height + 100; i += 10) {
-        const curve = Math.sin((roadOffset + i) * 0.008) * 90;
-        const x = canvas.width / 2 + curve;
-        const y = i;
-        if (i === -100) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      for (let i = 0; i < 800; i += 20) {
+        const curve = Math.sin((i * 0.01 + Date.now() * 0.0005)) * 100;
+        ctx.lineTo(300 + curve, i - 100);
       }
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // رسم السيارة
+      // سيارة (تغير لون لو keys مضغوطة)
       ctx.save();
       ctx.translate(car.x, car.y);
       ctx.rotate(car.angle);
-      ctx.fillStyle = '#00aaff';
+      ctx.fillStyle = keys['w'] ? '#ff0' : (keys['s'] ? '#f80' : '#00aaff');
       ctx.shadowColor = '#0ff';
-      ctx.shadowBlur = 20;
-      ctx.fillRect(-car.width/2, -car.height/2, car.width, car.height);
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(-10, -25, 20, 12); // مقدمة
-      ctx.fillRect(-10, 13, 20, 12);  // مؤخرة
+      ctx.shadowBlur = 25;
+      ctx.fillRect(-15, -30, 30, 60);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(-12, -28, 24, 10);
+      ctx.fillRect(-12, 18, 24, 10);
       ctx.restore();
     }
 
     function loop() {
       update();
       draw();
-      if (gameRunning) requestAnimationFrame(loop);
+      requestAnimationFrame(loop);
     }
 
+    // ابدأ
+    instructionsEl.style.display = 'block';
+    setTimeout(() => { instructionsEl.style.display = 'none'; }, 5000);
     loop();
   </script>
 </body>
 </html>
-
