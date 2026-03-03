@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Forza Horizon Leaderboard - B3R9Y</title>
+  <title>Forza Horizon 5 Drift Zones Leaderboard - B3R9Y</title>
   <style>
     body {
       margin: 0;
@@ -15,8 +15,8 @@
       display: flex;
     }
     .sidebar {
-      width: 300px;
-      background: rgba(20, 20, 60, 0.9);
+      width: 340px;
+      background: rgba(20, 20, 60, 0.92);
       padding: 20px;
       border-right: 4px solid #00d4ff;
       overflow-y: auto;
@@ -25,40 +25,41 @@
     }
     .sidebar h2 {
       color: #00d4ff;
-      text-shadow: 0 0 10px #00d4ff;
-      margin: 20px 0 10px;
-      font-size: 1.4em;
+      text-shadow: 0 0 12px #00d4ff;
+      margin: 30px 0 12px;
+      font-size: 1.6em;
       text-align: center;
     }
     .category-btn {
       display: block;
       width: 100%;
       padding: 12px;
-      margin: 6px 0;
-      background: rgba(0, 212, 255, 0.08);
-      border: 1px solid #00d4ff33;
+      margin: 8px 0;
+      background: rgba(0, 212, 255, 0.12);
+      border: 1px solid #00d4ff44;
       color: #e0e0ff;
       font-size: 1.1em;
       cursor: pointer;
-      border-radius: 6px;
+      border-radius: 8px;
       transition: 0.3s;
+      text-align: center;
     }
     .category-btn:hover {
-      background: rgba(0, 212, 255, 0.25);
+      background: rgba(0, 212, 255, 0.35);
     }
-    .map-list {
+    .sub-list {
       display: none;
-      padding-left: 12px;
+      padding-left: 18px;
     }
-    .map-list.active {
+    .sub-list.active {
       display: block;
     }
     .map-btn {
       display: block;
       width: 100%;
-      padding: 10px 14px;
-      margin: 4px 0;
-      background: rgba(0, 212, 255, 0.06);
+      padding: 10px 16px;
+      margin: 5px 0;
+      background: rgba(0, 212, 255, 0.07);
       border: 1px solid #00d4ff22;
       color: #d0d0ff;
       font-size: 0.95em;
@@ -70,31 +71,31 @@
     .map-btn:hover, .map-btn.active {
       background: #00d4ff;
       color: #0f0c29;
-      box-shadow: 0 0 12px #00d4ff88;
+      box-shadow: 0 0 14px #00d4ff;
     }
     .main-content {
-      margin-left: 320px;
+      margin-left: 360px;
       padding: 40px 60px;
       flex: 1;
     }
     h1 {
       color: #00d4ff;
-      text-shadow: 0 0 15px #00d4ff;
+      text-shadow: 0 0 18px #00d4ff;
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 40px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      background: rgba(30, 30, 80, 0.65);
-      border-radius: 10px;
+      background: rgba(30, 30, 80, 0.75);
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 0 25px rgba(0,212,255,0.25);
+      box-shadow: 0 0 35px rgba(0,212,255,0.35);
     }
     th, td {
-      padding: 14px 16px;
+      padding: 16px;
       text-align: center;
-      border-bottom: 1px solid #00d4ff22;
+      border-bottom: 1px solid #00d4ff33;
     }
     th {
       background: #00d4ff;
@@ -102,40 +103,91 @@
       font-weight: bold;
     }
     tr:hover {
-      background: rgba(0,212,255,0.12);
+      background: rgba(0,212,255,0.18);
     }
     .no-data {
       text-align: center;
-      font-size: 1.5em;
+      font-size: 1.8em;
       color: #ff7777;
-      margin-top: 120px;
+      margin-top: 180px;
     }
   </style>
 </head>
 <body>
 
   <div class="sidebar">
-    <h2>AWD Leaderboards</h2>
-    <div class="map-list active" id="awd-list">
-      <button class="map-btn active" data-map="awd1">????</button>
-      <button class="map-btn" data-map="awd2">????</button>
-      <button class="map-btn" data-map="awd3">????</button>
-      <button class="map-btn" data-map="awd4">????</button>
-      <button class="map-btn" data-map="awd5">????</button>
+
+    <!-- AWD Section -->
+    <h2>AWD Drift Zones</h2>
+
+    <button class="category-btn" onclick="toggleSubList('awd-mexico')">Mexico</button>
+    <div class="sub-list active" id="awd-mexico">
+      <button class="map-btn active" data-map="awd-mx-trailbreaker">Trailbreaker</button>
+      <button class="map-btn" data-map="awd-mx-caminodemontana">Camino de Montaña</button>
+      <button class="map-btn" data-map="awd-mx-costera">Costera</button>
+      <button class="map-btn" data-map="awd-mx-puntonorte">Punto Norte</button>
+      <button class="map-btn" data-map="awd-mx-otromundo">Otro Mundo</button>
+      <button class="map-btn" data-map="awd-mx-loscampos">Los Campos</button>
+      <button class="map-btn" data-map="awd-mx-reservoir">Reservoir</button>
+      <button class="map-btn" data-map="awd-mx-panoramica">Panorámica</button>
+      <button class="map-btn" data-map="awd-mx-precipice">Precipice</button>
+      <button class="map-btn" data-map="awd-mx-lasdunas">Las Dunas</button>
+      <button class="map-btn" data-map="awd-mx-hillside">Hillside</button>
+      <button class="map-btn" data-map="awd-mx-rancheria">Ranchería</button>
+      <button class="map-btn" data-map="awd-mx-polytunnels">Polytunnels</button>
+      <button class="map-btn" data-map="awd-mx-farmlandtrail">Farmland Trail</button>
+      <button class="map-btn" data-map="awd-mx-lascurvas">Las Curvas</button>
+      <button class="map-btn" data-map="awd-mx-eastcoast">East Coast</button>
+      <button class="map-btn" data-map="awd-mx-arbolada">Arbolada</button>
+      <button class="map-btn" data-map="awd-mx-caraeste">Cara Este</button>
+      <button class="map-btn" data-map="awd-mx-esquisto">Esquisto</button>
+      <button class="map-btn" data-map="awd-mx-giroencorvado">Giro Encorvado</button>
     </div>
 
-    <h2>RWD Leaderboards</h2>
-    <div class="map-list" id="rwd-list">
-      <button class="map-btn" data-map="rwd1">????</button>
-      <button class="map-btn" data-map="rwd2">????</button>
-      <button class="map-btn" data-map="rwd3">????</button>
-      <button class="map-btn" data-map="rwd4">????</button>
-      <button class="map-btn" data-map="rwd5">????</button>
+    <button class="category-btn" onclick="toggleSubList('awd-hotwheels')">Hot Wheels</button>
+    <div class="sub-list" id="awd-hotwheels">
+      <button class="map-btn" data-map="awd-hw-horizonnexus">Horizon Nexus [S1]</button>
+      <button class="map-btn" data-map="awd-hw-rockslide">Rockslide [A]</button>
+      <button class="map-btn" data-map="awd-hw-watersedge">Water's Edge [S1]</button>
+      <button class="map-btn" data-map="awd-hw-icecauldron">Ice Cauldron [S2]</button>
+      <button class="map-btn" data-map="awd-hw-turboknot">Turbo Knot [S2]</button>
+    </div>
+
+    <button class="category-btn" onclick="toggleSubList('awd-rally')">Rally Adventure</button>
+    <div class="sub-list" id="awd-rally">
+      <button class="map-btn" data-map="awd-ra-devilspass">Devil's Pass</button>
+      <button class="map-btn" data-map="awd-ra-trescolinas">Tres Colinas</button>
+      <button class="map-btn" data-map="awd-ra-canyonsweep">Canyon Sweep</button>
+      <button class="map-btn" data-map="awd-ra-tierrasverdes">Tierras Verdes</button>
+      <button class="map-btn" data-map="awd-ra-joyamarron">Joya Marron</button>
+    </div>
+
+    <!-- RWD Section -->
+    <h2>RWD Drift Zones</h2>
+
+    <button class="category-btn" onclick="toggleSubList('rwd-mexico')">Mexico</button>
+    <div class="sub-list" id="rwd-mexico">
+      <button class="map-btn" data-map="rwd-mx-trailbreaker">Trailbreaker</button>
+      <button class="map-btn" data-map="rwd-mx-caminodemontana">Camino de Montaña</button>
+      <button class="map-btn" data-map="rwd-mx-costera">Costera</button>
+      <!-- ... يمكنك إكمال باقي الأسماء بنفس الطريقة -->
+    </div>
+
+    <button class="category-btn" onclick="toggleSubList('rwd-hotwheels')">Hot Wheels</button>
+    <div class="sub-list" id="rwd-hotwheels">
+      <button class="map-btn" data-map="rwd-hw-horizonnexus">Horizon Nexus [S1]</button>
+      <!-- ... باقي Hot Wheels -->
+    </div>
+
+    <button class="category-btn" onclick="toggleSubList('rwd-rally')">Rally Adventure</button>
+    <div class="sub-list" id="rwd-rally">
+      <button class="map-btn" data-map="rwd-ra-devilspass">Devil's Pass</button>
+      <!-- ... باقي Rally Adventure -->
     </div>
   </div>
 
   <div class="main-content">
-    <h1>Forza Horizon Leaderboard</h1>
+    <h1>Forza Horizon 5 Drift Zones Leaderboard</h1>
     <table id="leaderboard-table">
       <thead>
         <tr>
@@ -147,53 +199,37 @@
       <tbody id="leaderboard-body"></tbody>
     </table>
     <div id="no-data-msg" class="no-data" style="display:none;">
-      No data for this map yet
+      No leaderboard data for this drift zone yet
     </div>
   </div>
 
   <script>
-    // ← Edit your data here
+    // ← هنا تضع بيانات اللاعبين لكل Drift Zone
     const leaderboards = {
-      // AWD maps
-      "awd1": [
-        { player: "B3R9Y", car: "Audi RS 3", points: 14280 },
-        { player: "TurboKSA", car: "Subaru WRX STI", points: 13890 },
-        { player: "AWDKing", car: "Mitsubishi Lancer Evo X", points: 13540 },
+      "awd-mx-trailbreaker": [
+        { player: "B3R9Y", car: "Subaru Impreza WRX STI", points: 152300 },
+        { player: "AWDDrifter", car: "Mitsubishi Lancer Evolution X", points: 148900 },
       ],
-      "awd2": [
-        { player: "GhostRacer", car: "BMW M3 GTR", points: 11970 },
-        { player: "B3R9Y", car: "Porsche 911 Turbo S", points: 11620 },
+      "awd-mx-caminodemontana": [
+        { player: "TurboAWD", car: "Audi RS 3", points: 137400 },
       ],
-      "awd3": [],
-      "awd4": [
-        { player: "DriftMaster", car: "Mercedes-AMG GT 63 S 4MATIC+", points: 9870 },
-      ],
-      "awd5": [],
-
-      // RWD maps
-      "rwd1": [
-        { player: "B3R9Y", car: "Chevrolet Corvette Z06", points: 15430 },
-        { player: "RearWheelGod", car: "Ford Mustang GT", points: 14980 },
-        { player: "NightRider", car: "Dodge Viper ACR", points: 14560 },
-      ],
-      "rwd2": [
-        { player: "SpeedDemon", car: "Nissan 350Z", points: 11240 },
-        { player: "B3R9Y", car: "Mazda RX-7", points: 10890 },
-      ],
-      "rwd3": [],
-      "rwd4": [
-        { player: "ShadowDrift", car: "Toyota GR Supra", points: 13450 },
-      ],
-      "rwd5": [],
+      // أضف باقي المابات هنا بنفس الطريقة (كل مفتاح مطابق لـ data-map)
+      // مثال: "rwd-mx-trailbreaker": [ ... ],
     };
 
     const allMapButtons = document.querySelectorAll('.map-btn');
     const tableBody = document.getElementById('leaderboard-body');
     const noDataMsg = document.getElementById('no-data-msg');
 
+    function toggleSubList(id) {
+      const list = document.getElementById(id);
+      list.classList.toggle('active');
+    }
+
     function showLeaderboard(mapKey) {
       allMapButtons.forEach(btn => btn.classList.remove('active'));
-      document.querySelector(`[data-map="${mapKey}"]`)?.classList.add('active');
+      const activeBtn = document.querySelector(`[data-map="${mapKey}"]`);
+      if (activeBtn) activeBtn.classList.add('active');
 
       tableBody.innerHTML = '';
       const data = leaderboards[mapKey] || [];
@@ -205,7 +241,6 @@
 
       noDataMsg.style.display = 'none';
 
-      // Sort descending by points
       data.sort((a, b) => b.points - a.points);
 
       data.forEach(entry => {
@@ -219,7 +254,6 @@
       });
     }
 
-    // Click handlers for all map buttons
     allMapButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         const map = btn.getAttribute('data-map');
@@ -227,8 +261,8 @@
       });
     });
 
-    // Show first AWD map by default
-    showLeaderboard('awd1');
+    // عرض أول ماب افتراضي
+    showLeaderboard('awd-mx-trailbreaker');
   </script>
 
 </body>
