@@ -1,15 +1,235 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>B3R9Y</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Forza Horizon Leaderboard - B3R9Y</title>
   <style>
-    body { margin:0; padding:0; background:#000; height:100vh; display:flex; align-items:center; justify-content:center; }
-    img { max-width:100%; max-height:100vh; object-fit:contain; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: #e0e0ff;
+      min-height: 100vh;
+      display: flex;
+    }
+    .sidebar {
+      width: 300px;
+      background: rgba(20, 20, 60, 0.9);
+      padding: 20px;
+      border-right: 4px solid #00d4ff;
+      overflow-y: auto;
+      height: 100vh;
+      position: fixed;
+    }
+    .sidebar h2 {
+      color: #00d4ff;
+      text-shadow: 0 0 10px #00d4ff;
+      margin: 20px 0 10px;
+      font-size: 1.4em;
+      text-align: center;
+    }
+    .category-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 6px 0;
+      background: rgba(0, 212, 255, 0.08);
+      border: 1px solid #00d4ff33;
+      color: #e0e0ff;
+      font-size: 1.1em;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+    .category-btn:hover {
+      background: rgba(0, 212, 255, 0.25);
+    }
+    .map-list {
+      display: none;
+      padding-left: 12px;
+    }
+    .map-list.active {
+      display: block;
+    }
+    .map-btn {
+      display: block;
+      width: 100%;
+      padding: 10px 14px;
+      margin: 4px 0;
+      background: rgba(0, 212, 255, 0.06);
+      border: 1px solid #00d4ff22;
+      color: #d0d0ff;
+      font-size: 0.95em;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: 0.3s;
+      text-align: left;
+    }
+    .map-btn:hover, .map-btn.active {
+      background: #00d4ff;
+      color: #0f0c29;
+      box-shadow: 0 0 12px #00d4ff88;
+    }
+    .main-content {
+      margin-left: 320px;
+      padding: 40px 60px;
+      flex: 1;
+    }
+    h1 {
+      color: #00d4ff;
+      text-shadow: 0 0 15px #00d4ff;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(30, 30, 80, 0.65);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 25px rgba(0,212,255,0.25);
+    }
+    th, td {
+      padding: 14px 16px;
+      text-align: center;
+      border-bottom: 1px solid #00d4ff22;
+    }
+    th {
+      background: #00d4ff;
+      color: #0f0c29;
+      font-weight: bold;
+    }
+    tr:hover {
+      background: rgba(0,212,255,0.12);
+    }
+    .no-data {
+      text-align: center;
+      font-size: 1.5em;
+      color: #ff7777;
+      margin-top: 120px;
+    }
   </style>
 </head>
 <body>
-  <img src="B3r9Y.png" alt="B3R9Y">
+
+  <div class="sidebar">
+    <h2>AWD Leaderboards</h2>
+    <div class="map-list active" id="awd-list">
+      <button class="map-btn active" data-map="awd1">????</button>
+      <button class="map-btn" data-map="awd2">????</button>
+      <button class="map-btn" data-map="awd3">????</button>
+      <button class="map-btn" data-map="awd4">????</button>
+      <button class="map-btn" data-map="awd5">????</button>
+    </div>
+
+    <h2>RWD Leaderboards</h2>
+    <div class="map-list" id="rwd-list">
+      <button class="map-btn" data-map="rwd1">????</button>
+      <button class="map-btn" data-map="rwd2">????</button>
+      <button class="map-btn" data-map="rwd3">????</button>
+      <button class="map-btn" data-map="rwd4">????</button>
+      <button class="map-btn" data-map="rwd5">????</button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <h1>Forza Horizon Leaderboard</h1>
+    <table id="leaderboard-table">
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Car</th>
+          <th>Points</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboard-body"></tbody>
+    </table>
+    <div id="no-data-msg" class="no-data" style="display:none;">
+      No data for this map yet
+    </div>
+  </div>
+
+  <script>
+    // ← Edit your data here
+    const leaderboards = {
+      // AWD maps
+      "awd1": [
+        { player: "B3R9Y", car: "Audi RS 3", points: 14280 },
+        { player: "TurboKSA", car: "Subaru WRX STI", points: 13890 },
+        { player: "AWDKing", car: "Mitsubishi Lancer Evo X", points: 13540 },
+      ],
+      "awd2": [
+        { player: "GhostRacer", car: "BMW M3 GTR", points: 11970 },
+        { player: "B3R9Y", car: "Porsche 911 Turbo S", points: 11620 },
+      ],
+      "awd3": [],
+      "awd4": [
+        { player: "DriftMaster", car: "Mercedes-AMG GT 63 S 4MATIC+", points: 9870 },
+      ],
+      "awd5": [],
+
+      // RWD maps
+      "rwd1": [
+        { player: "B3R9Y", car: "Chevrolet Corvette Z06", points: 15430 },
+        { player: "RearWheelGod", car: "Ford Mustang GT", points: 14980 },
+        { player: "NightRider", car: "Dodge Viper ACR", points: 14560 },
+      ],
+      "rwd2": [
+        { player: "SpeedDemon", car: "Nissan 350Z", points: 11240 },
+        { player: "B3R9Y", car: "Mazda RX-7", points: 10890 },
+      ],
+      "rwd3": [],
+      "rwd4": [
+        { player: "ShadowDrift", car: "Toyota GR Supra", points: 13450 },
+      ],
+      "rwd5": [],
+    };
+
+    const allMapButtons = document.querySelectorAll('.map-btn');
+    const tableBody = document.getElementById('leaderboard-body');
+    const noDataMsg = document.getElementById('no-data-msg');
+
+    function showLeaderboard(mapKey) {
+      allMapButtons.forEach(btn => btn.classList.remove('active'));
+      document.querySelector(`[data-map="${mapKey}"]`)?.classList.add('active');
+
+      tableBody.innerHTML = '';
+      const data = leaderboards[mapKey] || [];
+
+      if (data.length === 0) {
+        noDataMsg.style.display = 'block';
+        return;
+      }
+
+      noDataMsg.style.display = 'none';
+
+      // Sort descending by points
+      data.sort((a, b) => b.points - a.points);
+
+      data.forEach(entry => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${entry.player}</td>
+          <td>${entry.car}</td>
+          <td>${entry.points.toLocaleString()}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Click handlers for all map buttons
+    allMapButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const map = btn.getAttribute('data-map');
+        showLeaderboard(map);
+      });
+    });
+
+    // Show first AWD map by default
+    showLeaderboard('awd1');
+  </script>
+
 </body>
 </html>
