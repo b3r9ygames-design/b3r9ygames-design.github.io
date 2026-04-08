@@ -5,7 +5,18 @@
     <title>Admin</title>
   </head>
   <body>
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <div id="nc-root"></div>
+
+    <script>
+      window.CMS_MANUAL_INIT = true;
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+
+    <script>
+      if (window.CMS) {
+        window.CMS.init();
+      }
+    </script>
   </body>
 </html>
